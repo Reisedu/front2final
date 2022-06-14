@@ -1,0 +1,66 @@
+* {
+    overflow: hidden;
+  }
+
+body{
+    width: 100vw;
+    height: 100vh;
+    background-image: url(./img/espaço1.jpg);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: #14c5ea
+}
+
+/* .form-control:hover{
+    box-shadow: 0 0 0 50rem #16c7eb;;
+} */
+
+.form-control:focus{
+    color: #14c5ea
+    /* box-shadow: 0 0 0 0.3rem #0caccc;; */
+}
+
+button{
+    margin: 1vh;
+}
+
+#formUm{
+    width: 45vw;
+    height: 95vh;
+    padding: 8px;
+    background: rgba(48, 45, 233, 0);
+    backdrop-filter: blur( 13.5px );
+    -webkit-backdrop-filter: blur( 13.5px );
+    border-radius: 30px;
+}
+
+#formDois{
+    background: rgba(48, 45, 233, 0);
+    backdrop-filter: blur( 13.5px );
+    -webkit-backdrop-filter: blur( 13.5px );
+    border-radius: 30px;
+}
+
+
+.lua {
+    width: 230px;
+    height: 230px;
+    background-image: url(./img/lua.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: fixed;
+    right: 0px;
+    animation-name: luaanimacao;
+    animation: luaanimacao 350s linear infinite normal;
+}
+
+  @keyframes luaanimacao {
+    from {
+      transform: rotate(360deg);
+    }
+  
+    to {
+      transform: rotate(-360deg);
+    }
+  }
