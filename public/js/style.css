@@ -1,8 +1,13 @@
 * {
     overflow: hidden;
-  }
+}
 
-body{
+#htmlreca{
+  background-color: blue;
+}
+
+
+#body{
     width: 100vw;
     height: 100vh;
     background-image: url(./img/espaço1.jpg);
@@ -10,6 +15,17 @@ body{
     background-repeat: no-repeat;
     background-size: cover;
     color: #14c5ea
+}
+
+#recaBody{
+  background-color: blueviolet;
+}
+
+
+header{
+  background: rgba(48, 45, 233, 0);
+    backdrop-filter: blur( 13.5px );
+    -webkit-backdrop-filter: blur( 13.5px );
 }
 
 /* .form-control:hover{
@@ -40,6 +56,10 @@ button{
     backdrop-filter: blur( 13.5px );
     -webkit-backdrop-filter: blur( 13.5px );
     border-radius: 30px;
+}
+
+#btnsair{
+  padding: 5px;
 }
 
 

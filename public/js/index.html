@@ -11,7 +11,7 @@
    
 </head>
 
-<body>
+<body id="body">
     <div class="lua"> </div>
     
     <div class="container d-flex flex-column align-items-center"  id="formUm">
@@ -51,10 +51,44 @@
                 <label class="text-center">não tem conta? <br> crie sua conta gratuita</label>
                 <br>
                 <div class="d-flex d-flex flex-column align-items-center">
-                    <button type="button" class="btn btn-outline-info" id="btn2">criar conta</button>    
+                    <button type="button" class="btn btn-outline-info "link-default" data-bs-toggle="modal" data-bs-target="#register-modal"" id="btn2">criar conta</button>    
                 </div> 
         </div>
     </div>
+
+    <!-- modal -->
+
+    <div class="modal fade" id="register-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel">Crie sua conta</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form id="create-form">
+                  <div class="modal-body">
+                  <div class="mb-3">
+                      <label for="email-create-input" class="form-label">E-mail</label>
+                      <input type="email" class="form-control" id="email-create-input" aria-describedby="emailHelp">
+                      <div id="emailHelp" class="form-text">Utilize seu e-mail para criar a conta.</div>
+                  </div>
+
+                  <div class="mb-3">
+                      <label for="password-create-input" class="form-label">Senha</label>
+                      <input type="password" class="form-control" id="password-create-input">
+                      <div id="emailHelp" class="form-text">Utilize uma senha fácil de lembrar e anote para não esquecer.</div>
+                  </div>
+                  </div>
+                  
+                  <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary button-cancel" data-bs-dismiss="modal">Cancelar</button>
+                  <button type="submit" class="btn button-default">Criar conta</button>
+                  </div>
+            </form>
+          </div>
+        </div>
+      </div>
   
     <script src="./script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
