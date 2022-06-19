@@ -17,19 +17,23 @@
     color: #14c5ea
 }
 
-#recaBody{
- background-image: url(./img/espaço2.jpg);
- background-attachment: fixed; 
- background-repeat: no-repeat;
- background-size: cover;
- color: #14c5ea;
+#recadosHTML{
+  background-image: url(./img/espaço2.jpg);
+  background-attachment: fixed; 
+  background-repeat: no-repeat;
+  background-size: cover;
+  color: #14c5ea;
 }
 
-
-#headerTablela{
+#headerRecado{
   background-color: rgba(5, 5, 5, 0.623);
   backdrop-filter: blur( 13.5px );
   -webkit-backdrop-filter: blur( 13.5px );
+}
+
+#tituloheadrecado{
+  color: white;
+  animation: neon 8s infinite;
 }
 
 .form-control:focus{
@@ -53,18 +57,19 @@ button{
 }
 
 #formUm{
-  width: 45vw;
-  height: 100vh;
-  padding: 8px;
   background: rgba(48, 45, 233, 0);
   backdrop-filter: blur( 13.5px );
   -webkit-backdrop-filter: blur( 13.5px );
-  border-radius: 30px;
+  border-radius: 50px;
 }
 
 .modal-content{
   background-image: url(./img/planetas_modal.jpg);
   border-radius: 25px;
+}
+
+#modal-apagar{
+  color: white;
 }
 
 #emailHelp{
@@ -87,6 +92,19 @@ button{
   animation: luaanimacao 350s linear infinite normal;
 }
 
+.astronauta {
+  width: 380px;
+  height: 305px;
+  background-image: url(./img/astronauta2.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: fixed;
+  animation-name: astronauta;
+  animation: astronauta 35s linear infinite normal;
+}
+
+
+
 @keyframes luaanimacao {
   from {
     transform: rotate(360deg);
@@ -94,5 +112,33 @@ button{
   
   to {
     transform: rotate(-360deg);
+  }
+}
+
+@keyframes astronauta {
+  0%{
+    transform: rotate(0deg);
+  }
+  
+  50%{
+    transform: rotate(10deg);
+  }
+
+  100%{
+    transform: rotate(0deg);
+  }
+}
+
+
+
+@keyframes neon{
+  0%, 39%, 41%, 59%,61%,100%{
+    text-shadow:
+    white 0 0 12px,
+    #14c5ea 0 0 24px,
+    #14c5ea 0 0 36px;
+  }
+  40%, 60%{
+    text-shadow: none;
   }
 }

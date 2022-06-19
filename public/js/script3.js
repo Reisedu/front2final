@@ -1,89 +1,116 @@
-// aula Leh 16-06-22
-let inputTitulo = document.getElementById("titulo-recado");
-let inputDescricao = document.getElementById("descricao-recado");
-let btnSalvar = document.getElementById("btn-salvar");
-let tabela = document.getElementById("tabela");
-let botaoEditarModal = document.getElementById("btn-editar");
-// fizemos um modal para cada acontecimento (colocar recado, editar recado, apagar recado. Cada um tem seu modal no html e é puxado aqui)
-let modalSalvar = new bootstrap.Modal("#modal-salvar");
-let modalEditar = new bootstrap.Modal("#modal-editar");
-let modalApagar = new bootstrap.Modal("#modal-apagar");
-let btnConfirma = document.getElementById("btn-apagar");
-let usuarioLogado = sessionStorage.getItem("usuarioLogado");
-function salvarMensagem() {
-    let listaRecados = buscarRecados();
+"use strict";
+// TRAZER O USUARIO LOGADO NA APLICAÇÃO - usuarioLogado
+// nesse caso o usuario logado é o 'usuarioLogao' DO LADO do getItem.
+// o "usuaroLogado" no inicio é uma VARIAVEL e poderia ser qualquer nome, aqui é o mesmo, mas são coisas diferentes.
+// e não é a variavel que queremos botar na sessionStorage. 
+// lembra que setItem bota e getItem pega. 
+// logo o setItem da sua pagina que faz o login e manda para essa cria o que essa vai pegar 
+let usuarioLogado = JSON.parse(sessionStorage.getItem('usuarioLogado') || 'null');
+document.addEventListener('DOMContentLoaded', () => {
+    if (!usuarioLogado) {
+        alert('voce precisa estar logado');
+        window.location.href = "./index.html";
+        return;
+    }
+    carregarRecados();
+});
+// aqui os MODAIS da aplicação
+// quando lidamos com o bootstrap não usamos "document.getElemetById". se usa dessa forma:
+let modalCadastro = new bootstrap.Modal('#modal-cadastro');
+// o # faz referença ao id
+let modalEditar = new bootstrap.Modal('#modal-editar');
+let modalApagar = new bootstrap.Modal('#modal-apagar');
+// aqui os INPUTS da aplicação
+// no ts PRECISA dizer o tipo do retorno (que é esse "as HTML..."
+//  se não falar o tipo não vai ter acesso aos atributos do elemeto (como o value)
+let inputTitulo = document.getElementById('input-titulo');
+// é possivel fazer: 
+// let inputDescricao = (document.getElementById('input-descricao') as HTMLTextAreaElement).value; para pegar o valor
+let inputDescricao = document.getElementById('input-descricao');
+let inputTituloEditar = document.getElementById('input-titulo-editar');
+let inputDescricaoEditar = document.getElementById('input-descricao-editar');
+let tabela = document.getElementById('tabela');
+// aqui os BOTÃO necessários
+let btnSalvar = document.getElementById('btn-salvar');
+let btnAtualizar = document.getElementById('btn-editar');
+let btnConfirm = document.getElementById('btn-apagar');
+// aqui os EVENTOS
+btnSalvar.addEventListener('click', salvarRecado);
+document.addEventListener('DOMContentLoaded', carregarRecados);
+function salvarRecado() {
+    let listaRecados = buscarRecadosNoStorage();
+    if (inputTitulo.value === '') {
+        return alert('preencha titulo');
+    }
+    if (inputDescricao.value === '') {
+        return alert('preencha descrição');
+    }
+    inputDescricao.removeAttribute('style');
     let maiorIndice = 1;
-    let novoRecado;
-}
-if (listaRecados.legth > 0) {
-    let maior = listaRecados.reduce((anterior, proximo) => {
-        if (anterior.codigo > proximo.codigo) {
-            return anterior;
-        }
-        return proximo;
-    });
-    maoiorIndice = maoir.codigo;
-    novoRecado = {
-        codigo: ++maoirIndice,
-        descricao: inputDescricao.value,
-        titulo: inputTitulo.value
+    if (listaRecados.length > 0) {
+        let maior = listaRecados.reduce((valorAtual, proximo) => {
+            if (valorAtual.codigo > proximo.codigo) {
+                return valorAtual;
+            }
+            return proximo;
+        });
+        maiorIndice = Number(maior.codigo) + 1;
+    }
+    // esse tipo "recado" é a interface
+    let novoRecado = {
+        codigo: `${maiorIndice}`,
+        titulo: inputTitulo.value,
+        descricao: inputDescricao.value
     };
+    listaRecados.push(novoRecado);
+    salvarNoStorage(listaRecados);
+    inputDescricao.value = '';
+    inputTitulo.value = '';
+    modalCadastro.hide();
+    mostrarNoHTML(novoRecado);
 }
-else {
-    novoRecado = {
-        codigo: ++maiorIndice,
-        descricao: inputDescricao.value,
-        titulo: inputTitulo.value
-    };
+/* AQUI REALIZAR A LÓGICA PARA SALVAR RECADOS DO USUARIO LOGADO*/
+function salvarNoStorage(recados) {
+    // trazer lista de usuarios
+    //  buscar na lista comparando o usuario que possuir o login igual ao login do usuarioLogado
+    //  e armazenar o indice desse usuario
+    //usuarios[indiceUsuarioLogado].recados = recados;
+    // mandaria salvar a lista de usuarios
+    // setItem - criar
+    localStorage.setItem('recados', JSON.stringify(recados));
 }
-listaRecados.push(novoRecado);
-salvarRecadoStorage(listaRecados);
-mostrarNoHTML(novoRecado);
-inputTitulo.value = '';
-inputDescricao.value = '';
-modalSalvar.hide();
-function buscarRecado() {
-    let usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
-    let indiceUsuarioLogado = usuarios.findIndex((usuario) => usuario.login === usuarioLogado);
-    return usuarios[indiceUsuarioLogado].recados;
-}
-// aqui
-function salvarRecadoStorage(recados) {
-    // setItem - salvar um dado
-    let usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
-    let indiceUsuarioLogado = usuarios.findIndex((usuario) => usuario.login === usuarioLogado);
-    usuarios[indiceUsuarioLogado].recados = recados;
-    localStorage.setItem('usuarios', JSON.stringify(usuarios));
+/* AQUI REALIZAR A LÓGICA PARA BUSCAR RECADOS DO USUARIO LOGADO*/
+function buscarRecadosNoStorage() {
+    // getItem - buscar
+    let listaRecados = JSON.parse(localStorage.getItem('recados') || '[]');
+    return listaRecados;
 }
 function mostrarNoHTML(recado) {
     let novaLinha = document.createElement('tr');
+    novaLinha.setAttribute('id', recado.codigo);
     let colunaCodigo = document.createElement('td');
+    colunaCodigo.innerText = recado.codigo;
     let colunaTitulo = document.createElement('td');
+    colunaTitulo.innerText = recado.titulo;
     let colunaDescricao = document.createElement('td');
+    colunaDescricao.innerText = recado.descricao;
     let colunaAcoes = document.createElement('td');
     let botaoEditar = document.createElement('button');
-    let botaoApagar = document.createElement('button');
-    colunaTitulo.innerHTML = recado.titulo;
-    colunaDescricao.innerHTML = recado.descricao;
-    colunaCodigo.innerHTML = `${recado.codigo}`;
-    botaoEditar.setAttribute('type', 'button');
-    botaoEditar.setAttribute('class', 'btn btn-success');
+    botaoEditar.setAttribute('class', 'btn btn-success me-1');
     botaoEditar.setAttribute('data-bs-toggle', 'modal');
     botaoEditar.setAttribute('data-bs-target', '#modal-editar');
     botaoEditar.addEventListener('click', () => {
         prepararEdicao(recado);
     });
-    botaoEditar.innerHTML = `<i class="bi bi-pencil-square"></i>`;
-    botaoApagar.setAttribute('type', 'button');
+    botaoEditar.innerHTML = '<i class="bi bi-pencil-square"></i>';
+    let botaoApagar = document.createElement('button');
     botaoApagar.setAttribute('class', 'btn btn-danger');
     botaoApagar.setAttribute('data-bs-toggle', 'modal');
     botaoApagar.setAttribute('data-bs-target', '#modal-apagar');
     botaoApagar.addEventListener('click', () => {
         apagarRecado(recado.codigo);
     });
-    botaoApagar.innerHTML = `<i class="bi bi-trash"></i>`;
-    //novaLinha.setAttribute('class', 'nome-classe');
-    novaLinha.setAttribute('id', `${recado.codigo}`);
+    botaoApagar.innerHTML = '<i class="bi bi-trash3"></i>';
     colunaAcoes.appendChild(botaoEditar);
     colunaAcoes.appendChild(botaoApagar);
     novaLinha.appendChild(colunaCodigo);
@@ -92,18 +119,16 @@ function mostrarNoHTML(recado) {
     novaLinha.appendChild(colunaAcoes);
     tabela.appendChild(novaLinha);
 }
-function carregarDados() {
-    let listaRecados = buscarRecados();
+function carregarRecados() {
+    let listaRecados = buscarRecadosNoStorage();
     for (let recado of listaRecados) {
         mostrarNoHTML(recado);
     }
 }
 function prepararEdicao(recado) {
-    let inputDescricaoEditar = document.getElementById('descricao-recado-editar');
-    let inputTituloEditar = document.getElementById('titulo-recado-editar');
     inputTituloEditar.value = recado.titulo;
     inputDescricaoEditar.value = recado.descricao;
-    botaoEditarModal.addEventListener('click', () => {
+    btnAtualizar.addEventListener('click', () => {
         let recadoAtualizado = {
             codigo: recado.codigo,
             titulo: inputTituloEditar.value,
@@ -112,163 +137,22 @@ function prepararEdicao(recado) {
         atualizarRecado(recadoAtualizado);
     });
 }
-function atualizarRecado(recadoAtualizado) {
-    let recados = buscarRecados();
-    let indiceRecado = recados.findIndex((recado) => recado.codigo === recadoAtualizado.codigo);
-    recados[indiceRecado] = recadoAtualizado;
-    salvarRecadoStorage(recados);
+function atualizarRecado(recado) {
+    let recados = buscarRecadosNoStorage();
+    let indiceRecado = recados.findIndex((registro) => registro.codigo === recado.codigo);
+    recados[indiceRecado] = recado;
+    salvarNoStorage(recados);
     modalEditar.hide();
     window.location.reload();
 }
 function apagarRecado(codigo) {
-    btnConfirma.addEventListener('click', () => {
-        let listaRecados = buscarRecados();
+    btnConfirm.addEventListener('click', () => {
+        let listaRecados = buscarRecadosNoStorage();
         let indiceRecado = listaRecados.findIndex((registro) => registro.codigo == codigo);
+        console.log(indiceRecado);
         listaRecados.splice(indiceRecado, 1);
-        salvarRecadoStorage(listaRecados);
+        salvarNoStorage(listaRecados);
         modalApagar.hide();
         window.location.reload();
     });
 }
-export {};
-// let inputTitulo = document.getElementById('coloca') as HTMLInputElement;
-// let inputDescricao = document.getElementById('detalha') as HTMLTextAreaElement;
-// let btnSalvar = document.getElementById('btnColocar') as HTMLButtonElement;
-// let tabela = document.getElementById('tabela') as HTMLTableElement;
-// let botaoEditarModal = document.getElementById('editarRec') as HTMLButtonElement;
-// let modalSalvar = new bootstrap.Modal('#modalColoca');
-// let modalEditar = new bootstrap.Modal('#modaleditaRecado');
-// let modalApagar = new bootstrap.Modal('#modalApagar');
-// let btnConfirma = document.getElementById('btnApagarReca') as HTMLButtonElement;
-// let usuarioLogado = sessionStorage.getItem('usuarioLogado');
-// document.addEventListener('DOMContentLoaded', () => {
-//     if (!usuarioLogado) {
-//         // de onde pegou
-//         window.location.href = 'index.html'
-//         return
-//     }
-//     carregarDados();
-// });
-// interface Recado {
-//     codigo: number,
-//     titulo: string,
-//     descricao: string
-// }
-// function adcionar() {
-//     let listaRecados: Array<Recado> = buscarRecados();
-//     let maiorIndice = 1;
-//     let novoRecado: Recado;
-//     if (listaRecados.length > 0) {
-//         let maior = listaRecados.reduce((anterior: Recado, proximo: Recado) => {
-//             if (anterior.codigo > proximo.codigo) {
-//                 return anterior
-//             }
-//             return proximo
-//         });
-//         maiorIndice = maior.codigo;
-//         novoRecado = {
-//             codigo: ++maiorIndice,
-//             descricao: inputDescricao.value,
-//             titulo: inputTitulo.value
-//         }
-//     } else {
-//         novoRecado = {
-//             codigo: ++maiorIndice,
-//             descricao: inputDescricao.value,
-//             titulo: inputTitulo.value
-//         }
-//     }
-//     listaRecados.push(novoRecado);
-//     salvarRecadoStorage(listaRecados);
-//     mostrarNoHTML(novoRecado);
-//     inputTitulo.value = '';
-//     inputDescricao.value = '';
-//     // fecha modal
-//     modalSalvar.hide();
-// }
-// function buscarRecados() {
-//     let usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
-//     let indiceUsuarioLogado = usuarios.findIndex((usuario: any) => usuario.login === usuarioLogado);
-//     return usuarios[indiceUsuarioLogado].recados
-// }
-// function salvarRecadoStorage(recados: Array<Recado>) {
-//     let usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
-//     let indiceUsuarioLogado = usuarios.findIndex((usuario: any) => usuario.login === usuarioLogado);
-//     usuarios[indiceUsuarioLogado].recados = recados;
-//     localStorage.setItem('usuarios', JSON.stringify(usuarios));
-// }
-// function mostrarNoHTML(recado: Recado) {
-//     let novaLinha = document.createElement('tr');
-//     let colunaCodigo = document.createElement('td');
-//     let colunaTitulo = document.createElement('td');
-//     let colunaDescricao = document.createElement('td');
-//     let colunaAcoes = document.createElement('td');
-//     let botaoEditar = document.createElement('button');
-//     let botaoApagar = document.createElement('button');
-//     colunaTitulo.innerHTML = recado.titulo;
-//     colunaDescricao.innerHTML = recado.descricao;
-//     colunaCodigo.innerHTML = `${recado.codigo}`;
-//     botaoEditar.setAttribute('type', 'button');
-//     botaoEditar.setAttribute('class', 'btn btn-success');
-//     botaoEditar.setAttribute('data-bs-toggle', 'modal');
-//     botaoEditar.setAttribute('data-bs-target', '#modal-editar');
-//     botaoEditar.addEventListener('click', () => {
-//         prepararEdicao(recado);
-//     })
-//     botaoEditar.innerHTML = `<i class="bi bi-pencil-square"></i>`;
-//     botaoApagar.setAttribute('type', 'button');
-//     botaoApagar.setAttribute('class', 'btn btn-danger');
-//     botaoApagar.setAttribute('data-bs-toggle', 'modal');
-//     botaoApagar.setAttribute('data-bs-target', '#modal-apagar');
-//     botaoApagar.addEventListener('click', () => {
-//         apagarRecado(recado.codigo);
-//     })
-//     botaoApagar.innerHTML = `<i class="bi bi-trash"></i>`;
-//     //novaLinha.setAttribute('class', 'nome-classe');
-//     novaLinha.setAttribute('id', `${recado.codigo}`);
-//     colunaAcoes.appendChild(botaoEditar);
-//     colunaAcoes.appendChild(botaoApagar);
-//     novaLinha.appendChild(colunaCodigo);
-//     novaLinha.appendChild(colunaTitulo);
-//     novaLinha.appendChild(colunaDescricao);
-//     novaLinha.appendChild(colunaAcoes);
-//     tabela.appendChild(novaLinha);
-// }
-// function carregarDados() {
-//     let listaRecados = buscarRecados();
-//     for (let recado of listaRecados) {
-//         mostrarNoHTML(recado);
-//     }
-// }
-// function prepararEdicao(recado: Recado) {
-//     let inputDescricaoEditar = document.getElementById('descricao-recado-editar') as HTMLInputElement;
-//     let inputTituloEditar = document.getElementById('titulo-recado-editar') as HTMLInputElement;
-//     inputTituloEditar.value = recado.titulo;
-//     inputDescricaoEditar.value = recado.descricao;
-//     botaoEditarModal.addEventListener('click', () => {
-//         let recadoAtualizado: Recado = {
-//             codigo: recado.codigo,
-//             titulo: inputTituloEditar.value,
-//             descricao: inputDescricaoEditar.value
-//         }
-//         atualizarRecado(recadoAtualizado);
-//     })
-// }
-// function atualizarRecado(recadoAtualizado: Recado) {
-//     let recados: Recado[] = buscarRecados();
-//     let indiceRecado = recados.findIndex((recado) => recado.codigo === recadoAtualizado.codigo);
-//     recados[indiceRecado] = recadoAtualizado;
-//     salvarRecadoStorage(recados);
-//     modalEditar.hide();
-//     window.location.reload();
-// }
-// function apagarRecado(codigo: number) {
-//     btnConfirma.addEventListener('click', () => {
-//         let listaRecados: Recado[] = buscarRecados();
-//         let indiceRecado = listaRecados.findIndex((registro) => registro.codigo == codigo);
-//         listaRecados.splice(indiceRecado, 1);
-//         salvarRecadoStorage(listaRecados);
-//         modalApagar.hide();
-//         window.location.reload();
-//     })
-// }
