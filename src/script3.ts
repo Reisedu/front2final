@@ -1,14 +1,17 @@
 // TRAZER O USUARIO LOGADO NA APLICAÇÃO - usuarioLogado
+
     // nesse caso o usuario logado é o 'usuarioLogao' DO LADO do getItem.
     // o "usuaroLogado" no inicio é uma VARIAVEL e poderia ser qualquer nome, aqui é o mesmo, mas são coisas diferentes.
     // e não é a variavel que queremos botar na sessionStorage. 
     // lembra que setItem bota e getItem pega. 
     // logo o setItem da sua pagina que faz o login e manda para essa cria o que essa vai pegar 
 
+// codigo é lido do topo pra baixo, da esquerda para direita
+
 let usuarioLogado = JSON.parse(sessionStorage.getItem('usuarioLogado') || 'null');
 
 document.addEventListener('DOMContentLoaded', () => {
-    
+    // para impedir de entrar sem estar logado
     if (!usuarioLogado) {
         alert('voce precisa estar logado');
         window.location.href = "./index.html"
@@ -22,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // aqui os MODAIS da aplicação
 
 // quando lidamos com o bootstrap não usamos "document.getElemetById". se usa dessa forma:
+// para isso funcionar o bootstrap tem que estar no codigo (olhar node_modules)
 let modalCadastro = new bootstrap.Modal('#modal-cadastro');
         // o # faz referença ao id
 let modalEditar = new bootstrap.Modal('#modal-editar');
@@ -49,7 +53,7 @@ let btnConfirm = document.getElementById('btn-apagar') as HTMLButtonElement;
 btnSalvar.addEventListener('click', salvarRecado);
 document.addEventListener('DOMContentLoaded', carregarRecados);
 
-// interface é um tipo de dado exclusivo da nossa aplicação
+// interface é um tipo de dado exclusivo da nossa aplicação. igual a do crhis
 interface Recado {
     codigo: string,
     titulo: string,
@@ -123,6 +127,8 @@ function buscarRecadosNoStorage(): Array<Recado> {
     return listaRecados
 }
 
+
+// tabela entra aqui
 function mostrarNoHTML(recado: Recado) {
 
     let novaLinha = document.createElement('tr');
@@ -138,7 +144,7 @@ function mostrarNoHTML(recado: Recado) {
     colunaDescricao.innerText = recado.descricao;
 
     let colunaAcoes = document.createElement('td');
-
+    // o botão não ta no html, então coloca os atributos nele para deixar ele bonito
     let botaoEditar = document.createElement('button');
     botaoEditar.setAttribute('class', 'btn btn-success me-1');
     botaoEditar.setAttribute('data-bs-toggle', 'modal');
@@ -146,8 +152,9 @@ function mostrarNoHTML(recado: Recado) {
     botaoEditar.addEventListener('click', () => {
         prepararEdicao(recado);
     });
+    // link bootstrap. tem que botar o link la no html
     botaoEditar.innerHTML = '<i class="bi bi-pencil-square"></i>';
-
+ // o botão não ta no html, então coloca os atributos nele para deixar ele bonito
     let botaoApagar = document.createElement('button');
     botaoApagar.setAttribute('class', 'btn btn-danger');
     botaoApagar.setAttribute('data-bs-toggle', 'modal');
@@ -155,7 +162,7 @@ function mostrarNoHTML(recado: Recado) {
     botaoApagar.addEventListener('click', () => {
         apagarRecado(recado.codigo);
     })
-
+    // link bootstrap. tem que botar o link la no html
     botaoApagar.innerHTML = '<i class="bi bi-trash3"></i>';
 
     colunaAcoes.appendChild(botaoEditar);
@@ -211,6 +218,7 @@ function apagarRecado(codigo: string) {
 
         listaRecados.splice(indiceRecado, 1);
         salvarNoStorage(listaRecados);
+        // fecha modal
         modalApagar.hide();
 
         window.location.reload();
